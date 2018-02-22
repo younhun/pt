@@ -7,7 +7,7 @@ export default class SignupForm extends Component{
   static navigationOptions = {
     title : 'We R Promptech',
      headerStyle: {
-      backgroundColor: '#0277bd'
+      backgroundColor: '#9575cd'
     },
     headerTitleStyle: {
       color: 'white',
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   buttonContainer: {
-    backgroundColor: '#58a5f0',
+    backgroundColor: '#c7a4ff',
     paddingVertical: 10
   },
 

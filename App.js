@@ -37,7 +37,7 @@ const TabNav = TabNavigator({
     tabBarPosition: 'bottom',
     tabBarOptions: {
       
-      activeTintColor: '#58a5f0',
+      activeTintColor: '#65499c',
       inactiveTintColor: '#d1cece',
       showLabel: false,
       showIcon: true,
@@ -73,7 +73,7 @@ const AppStackNavigator = StackNavigator({
 
 
 }, {
-    headerMode: 'none'
+    // headerMode: 'none'
   });
 
 export default class App extends React.Component {
@@ -82,7 +82,7 @@ export default class App extends React.Component {
       <View style={styles.container}>
         
         
-        <TabNav />
+        <AppStackNavigator />
       </View>
     );
   }

@@ -6,12 +6,6 @@ import LoginForm from '../Components/LoginForm';
 //KeyboardAvoidingView 키보드 올라갈시 자동 padding
 
 export default class LoginPage extends Component {
-  static navigationOptions = {
-    title : 'We R Promptech',
-    headerStyle: {
-      backgroundColor: '#7e57c2'
-    }
-  }
   render(){
     return(
       <KeyboardAvoidingView behavior='padding' style={styles.container}>

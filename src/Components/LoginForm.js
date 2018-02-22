@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native'
 import { TextField } from 'react-native-material-textfield';
 
 const ACCESS_TOKEN = 'access_token';
@@ -8,7 +8,7 @@ export default class LoginForm extends Component{
   static navigationOptions = {
     title : 'We R Promptech',
      headerStyle: {
-      backgroundColor: '#0277bd',
+      backgroundColor: '#9575cd',
 
     },
       headerTitleStyle: {
@@ -19,58 +19,67 @@ export default class LoginForm extends Component{
   }
   constructor(props) {
     super(props);
-  
     this.state = {
       email: '',
       password: '',
-      errors: []
+      error: ""
     };
+  }
+
+  async storeToekn(accessToken){
+    try{
+      await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
+      this.getToken();
+    }catch(error){
+      console.log('storeToken went wrong')
+    }
+  }
+
+  async getToken(){
+    try{
+      let token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      console.log("token is:" + token);
+    }catch(error){
+      console.log('getToken went wrong')
+    }
   }
 
   
   async onLoginPressed(){
     try{
-      let response = await fetch("http://localhost:3000/api/users/authenticate" ,{
+      let response = await fetch("http://wr.promptech.co.kr/api/users/authenticate" ,{
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          
             password: this.state.password,
             email: this.state.email,
-            
-          
         })
       });
-
       let res = await response.text();
-      
+      // let res1 = res.substring(10,res.length-2)
       if(response.status >= 200 && response.status < 300){
-        console.log("res success is :" + res);
-        this.props.navigation.navigate('Home');
+        //Handle success
+        this.setState({error: ""});
+        let accessToken = res;
+        this.storeToekn(accessToken);
+        console.log("res success is :" + accessToken);
+        this.props.navigation.navigate('Home',{token: accessToken});
+
       }else {
-        let errors = res;
-        throw errors;
+        //Handle error
+        let error = res;
+        throw error;
       }
-
-    }catch(errors) {
-      console.log('catch errors:' + errors);
-
-      let formErrors = JSON.parse(errors);
-      let errorsArray = [];
-      for(let key in formErrors){
-        if(formErrors[key].length > 1){
-          formErrors[key].map(error=>errorArray.push(`${key} ${error}`))
-      }else {
-        errorsArray.push(`${key} ${formErrors[key]}`)
-        }
-      }
-      this.setState({errors: errorsArray});
-
+    }catch(error) {
+      this.setState({error: error});
+      console.log('catch errors:' + error);
     } 
   };
+
+
   render(){
     return(
       <View style={styles.container}>
@@ -92,7 +101,7 @@ export default class LoginForm extends Component{
           ref = {(input)=>this.password=input} //focus맞추기 위해
           onChangeText={(val) => this.setState({password: val})} 
         /> 
-        <TouchableOpacity style={styles.buttonContainer} onPress={this.onLoginPressed.bind(this)}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={()=>this.onLoginPressed()}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
@@ -101,8 +110,7 @@ export default class LoginForm extends Component{
           <Text style={styles.signupButton}>Signup </Text>
         </TouchableOpacity>    
       
-        <Text>{this.state.email}</Text>
-        <Text>{this.state.password}</Text>
+        <Text style={styles.error}>{this.state.error}</Text>
       </View>
       );
   }
@@ -132,7 +140,7 @@ export default class LoginForm extends Component{
     textAlign: 'center'
   },
   buttonContainer: {
-    backgroundColor: '#58a5f0',
+    backgroundColor: '#c7a4ff',
     paddingVertical: 10
   },
 
@@ -140,7 +148,13 @@ export default class LoginForm extends Component{
     textAlign: 'center',
     color: 'white',
     fontWeight: '700',
+  },
 
-
+  error: {
+    color: 'red',
+    fontSize: 20,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 20
   }
  });

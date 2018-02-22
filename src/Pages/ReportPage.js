@@ -6,8 +6,17 @@ import { Icon } from 'react-native-elements';
 
 export default class ReportPage extends Component{
   static navigationOptions = {
+    title : 'We R Promptech',
+      headerStyle: {
+        backgroundColor: '#9575cd',
+
+    },
+      headerTitleStyle: {
+        color: 'white',
+        fontWeight: '500'
+      },
     tabBarIcon: ({tintColor}) => (
-      <Icon name = 'border-color' style={{color: tintColor}} />
+      <Icon name = 'border-color' color =  {tintColor} />
     )
   }
   render(){
