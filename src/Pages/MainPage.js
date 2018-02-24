@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 import { Icon } from 'react-native-elements';
 import { Container, Content, Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
@@ -29,50 +29,52 @@ export default class MainPage extends Component{
   
     this.state = {
       error: '',
-      
+      data: [],
+      page: ''
     };
   }
 
 
 
+  async getData() {
+    let params = {
+      "access_token": this.props.navigation.state.params.token,
+  
+    }
 
-  async weeks(){
-    const token = this.props.navigation.state.params.token;
-    console.log(token);
-    try{
-      let response = await fetch("http://wr.promptech.co.kr/api/weeks" ,{
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-      let res = await response.text();
-      // let res1 = res.substring(10,res.length-2)
-      if(response.status >= 200 && response.status < 300){
-        //Handle success
-        this.setState({error: ""});
-        let accessToken = res;
-        this.storeToekn(accessToken);
-        console.log("res success is :" + accessToken);
-        this.props.navigation.navigate('Home',{token: accessToken});
+    let esc = encodeURIComponent
+    let query = Object.keys(params)
+                 .map(k => esc(k) + '=' + esc(params[k]))
+                 .join('&')
 
-      }else {
-        //Handle error
-        let error = res;
-        throw error;
-      }
-    }catch(error) {
-      this.setState({error: error});
-      console.log('catch errors:' + error);
-    } 
-  };
+    let url = 'http://wr.promptech.co.kr/api/weeks?' + query
+
+    await fetch(url)
+      .then(data => data.json())//data를 json형식으로
+      .then((text) => {
+        console.log('request succeeded with JSON response', text)
+        this.setState({
+          data: text
+        })
+      }).catch(function (error) {
+        console.log('request failed', error)
+      })
+   }
+
+
+
+  componentDidMount(){
+      
+    this.getData();
+  }
+
+
 
   render(){
+    
     return(
       //card 형식으로 보여주기위해 사용
-
-      <Container style={styles.container}>
+            <Container style={styles.container}>
         <Content>
           <Card>
             <CardItem>
@@ -86,10 +88,14 @@ export default class MainPage extends Component{
             </CardItem>
           </Card>
         </Content>
-          <TouchableOpacity onPress={()=>this.weeks()}>
+          <TouchableOpacity onPress={()=>this.getData()}>
           <Text style={styles.signupButton}> 123123</Text>
+          
         </TouchableOpacity> 
       </Container>
+
+
+    
       
       );
   }

@@ -44,6 +44,18 @@ export default class LoginForm extends Component{
     }
   }
 
+  async removeToken(){
+    try{
+      await AsyncStorage.removeItem(ACCESS_TOKEN);
+      this.getToken();
+    }catch(error){
+      console.log('remove token error');
+    }
+  }
+
+
+
+
   
   async onLoginPressed(){
     try{
@@ -59,11 +71,11 @@ export default class LoginForm extends Component{
         })
       });
       let res = await response.text();
-      // let res1 = res.substring(10,res.length-2)
+      let res1 = res.substring(10,res.length-2)
       if(response.status >= 200 && response.status < 300){
         //Handle success
         this.setState({error: ""});
-        let accessToken = res;
+        let accessToken = res1;
         this.storeToekn(accessToken);
         console.log("res success is :" + accessToken);
         this.props.navigation.navigate('Home',{token: accessToken});
@@ -74,6 +86,7 @@ export default class LoginForm extends Component{
         throw error;
       }
     }catch(error) {
+      this.removeToken();
       this.setState({error: error});
       console.log('catch errors:' + error);
     } 
