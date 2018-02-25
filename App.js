@@ -13,9 +13,7 @@ import ReportPage from './src/Pages/ReportPage';
 
 
 const TabNav = TabNavigator({
-  Home : {
-    screen : MainPage
-  },
+
 
   ReportPage: {
     screen: ReportPage
@@ -66,10 +64,12 @@ const AppStackNavigator = StackNavigator({
     screen : SignupForm
   },
 
-  
-  TabNav : {
+  Home : {
+    screen : MainPage
+  },
+  TabNav: {
     screen: TabNav
-  }
+  },
 
 
 }, {
