@@ -39,7 +39,7 @@ export default class ProfilePage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/users/me?' + query
+    let url = 'http://localhost:3000/api/users/me?' + query
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
       .then((text) => {
@@ -57,7 +57,7 @@ export default class ProfilePage extends Component{
    }
 
    onSetting(){
-    this.props.navigation.navigate('SettingPage');
+    this.props.navigation.navigate('SettingPage',{token: this.props.navigation.state.params.token});
    }
   componentDidMount(){
     this.getUser();
@@ -74,7 +74,10 @@ export default class ProfilePage extends Component{
           <Button
             title="Settings"
             buttonStyle={{marginTop: 20}}
+            backgroundColor = '#c7a4ff'
             onPress={()=> this.onSetting()}
+            icon = {{name: 'settings'}}
+
             />
 
           <List>

@@ -44,7 +44,7 @@ export default class ReportPage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/weeks/' + id + '/reports?'  + query
+    let url = 'http://localhost:3000/api/weeks/' + id + '/reports?'  + query
 
 
     try{

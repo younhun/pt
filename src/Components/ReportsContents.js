@@ -50,7 +50,7 @@ export default class ReportsContents extends Component {
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/weeks/'+ weekId + '/reports/' + reportId + '?' + query
+    let url = 'http://localhost:3000/api/weeks/'+ weekId + '/reports/' + reportId + '?' + query
     this.setState({loading: true});
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
@@ -85,7 +85,7 @@ export default class ReportsContents extends Component {
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/users/me?' + query
+    let url = 'http://localhost:3000/api/users/me?' + query
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
       .then((text) => {

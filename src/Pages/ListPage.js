@@ -44,7 +44,7 @@ export default class ListPage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/weeks/'+ id + '?' + query
+    let url = 'http://localhost:3000/api/weeks/'+ id + '?' + query
     this.setState({loading: true});
     await fetch(url)
       .then(data => data.json())//data를 json형식으로

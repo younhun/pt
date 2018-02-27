@@ -44,7 +44,7 @@ export default class EditPage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/weeks/' + id + '/reports?'  + query
+    let url = 'http://localhost:3000/api/weeks/' + id + '/reports?'  + query
 
 
     try{
@@ -90,7 +90,7 @@ export default class EditPage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://wr.promptech.co.kr/api/weeks/'+ weekId + '/reports/' + reportId + '?' + query
+    let url = 'http://localhost:3000/api/weeks/'+ weekId + '/reports/' + reportId + '?' + query
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
       .then((text) => {

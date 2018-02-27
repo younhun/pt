@@ -60,7 +60,7 @@ export default class LoginForm extends Component{
   
   async onLoginPressed(){
     try{
-      let response = await fetch("http://wr.promptech.co.kr/api/users/authenticate" ,{
+      let response = await fetch("http://localhost:3000/api/users/authenticate" ,{
         method: 'POST',
         headers: {
           'Accept': 'application/json',

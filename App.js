@@ -57,16 +57,7 @@ const TabNav = TabNavigator({
 
 );
 
-const SettingStack = StackNavigator({
-  SettingPage: {
-    screen: SettingPage
-  }, 
 
-
-}, {
-    headerMode: 'none',
-    mode: 'modal'
-  });
 
 
 const AppStackNavigator = StackNavigator({
@@ -93,8 +84,10 @@ const AppStackNavigator = StackNavigator({
     screen: EditPage
   },
 
-  SettingStack: {
-    screen: SettingStack
+  SettingPage: {
+    screen: SettingPage,
+    
+    
   }
 
 
