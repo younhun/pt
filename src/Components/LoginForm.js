@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, AsyncStorage, ScrollView } from 'react-native'
 import { TextField } from 'react-native-material-textfield';
 
+import { Icon } from 'react-native-elements';
 const ACCESS_TOKEN = 'access_token';
 
 export default class LoginForm extends Component{
@@ -59,7 +60,7 @@ export default class LoginForm extends Component{
   
   async onLoginPressed(){
     try{
-      let response = await fetch("http://localhost:3000/api/users/authenticate" ,{
+      let response = await fetch("http://wr.promptech.co.kr/api/users/authenticate" ,{
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -95,7 +96,8 @@ export default class LoginForm extends Component{
 
   render(){
     return(
-      <View style={styles.container}>
+      <ScrollView style={styles.container}
+        scrollEnabled={true}>
         <TextField style={styles.fieldStyle}
           labelFontSize = {18}
           keyboardType = 'email-address'
@@ -124,7 +126,8 @@ export default class LoginForm extends Component{
         </TouchableOpacity>    
       
         <Text style={styles.error}>{this.state.error}</Text>
-      </View>
+
+      </ScrollView>
       );
   }
 }

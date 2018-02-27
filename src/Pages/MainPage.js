@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
-import { Icon } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import { Container, Content, Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
 
-import CardComponent from '../Components/CardComponent';
+
 
 
 
@@ -19,6 +19,7 @@ export default class MainPage extends Component{
         color: 'white',
         fontWeight: '500'
       },
+      
     tabBarIcon: ({ tintColor }) => (
       <Icon name = 'home' color= {tintColor}/>
       ///이부분 어렵게 해결
@@ -49,7 +50,7 @@ export default class MainPage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://localhost:3000/api/weeks?' + query
+    let url = 'http://wr.promptech.co.kr/api/weeks?' + query
     this.setState({loading: true});
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
@@ -90,15 +91,17 @@ export default class MainPage extends Component{
         <FlatList
           data={this.state.data}
           renderItem={({item}) => 
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('ReportPage',{weekId: item.id, token: this.props.navigation.state.params.token})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('TabNav',{weekId: item.id, token: this.props.navigation.state.params.token})}>
             <Content>
               <Card> 
                 <CardItem>
                   <Left>
                     <Thumbnail source={require('../images/logo.png')} />
                     <Body>
-                      <Text>{item.start_date}</Text>
-                      <Text>{item.end_date}</Text>
+                      <Text>보고일</Text>
+                      <Text note>{item.start_date} ~ {item.end_date}</Text> 
+                      <Badge containerStyle={{ backgroundColor: '#c6a3ff'}}><Text style={{color: 'white'}}>{item.reports.length}</Text></Badge>
+                      
                     </Body>
                   </Left>
                 </CardItem>
@@ -117,8 +120,6 @@ export default class MainPage extends Component{
       </Container>
 
 
-      
-          
 
     
       
@@ -133,6 +134,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white'
 
+  },
+  count: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: 'red'
   }
 
 });

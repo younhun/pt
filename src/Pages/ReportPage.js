@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { Container, Content, Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
+import { TextField } from 'react-native-material-textfield';
+import ActionButton from 'react-native-action-button';
+
 
 export default class ReportPage extends Component{
   static navigationOptions = {
@@ -23,97 +25,133 @@ export default class ReportPage extends Component{
     super(props);
   
     this.state = {
-     data: [],
-     refreshing: false,
-     loading: false
+      work: '',
+      plan: '',
+      error: []
 
     };
   }
 
-  async getData() {
-    const id = this.props.navigation.state.params.weekId
-
+  async onSubmitPressed(){
     let params = {
       "access_token": this.props.navigation.state.params.token,
-      // 'page': this.state.page
+      
     }
+    const id = this.props.navigation.state.params.weekId
 
     let esc = encodeURIComponent
     let query = Object.keys(params)
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http://localhost:3000/api/weeks/'+ id + '?' + query
-    this.setState({loading: true});
-    await fetch(url)
-      .then(data => data.json())//data를 json형식으로
-      .then((text) => {
-        console.log('request succeeded with JSON response', text)
-        
-        this.setState({
-          data: text,
-          refreshing: false
+    let url = 'http://wr.promptech.co.kr/api/weeks/' + id + '/reports?'  + query
+
+
+    try{
+      let response = await fetch(url ,{
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            work: this.state.work,
+            plan: this.state.plan,
         })
-      }).catch(function (error) {
-        console.log('request failed', error)
+      });
+      let res = await response.text();
+      if(response.status >= 200 && response.status < 300){
+        //Handle success
+        this.setState({error: ""});
+        console.log("report success is :" + res);
+        this.props.navigation.navigate('ListPage');
 
-      })
-   }
+      }else {
+        //Handle error
+        let error = res;
+        throw error;
+      }
+    }catch(error) {
+      this.setState({error: error});
+      console.log('report errors:' + error);
+    } 
+  };
 
 
 
-  componentDidMount(){
-    this.getData();
-  }
+  render(){
 
-  render(){ 
 
     return(
-       <Container style={styles.container}>
-          <FlatList
-            data={this.state.data}
-            renderItem={({item}) => 
-            //아래 부분 report가 있으면 출력 없으면 false로 생상
-            <TouchableOpacity>
-              {item.report ? 
-              <Content>
-                <Card>
-                  <CardItem>
-                    <Left>
-                      <Thumbnail source={require('../images/logo.png')} />
-                      <Body>
-                        <Text>
-                          {item.name}
-                        </Text>
-                        
-                      </Body>
-                    </Left>
-                  </CardItem>
-                </Card>
-              </Content>
-              :
-              false 
-            }
+      //ScrollView = 키보드 숨기기
+        <ScrollView style={styles.container} 
+        scrollEnabled={true}>
+            
+            <TextField style={styles.fieldStyle}
+            label='작업내용'
+            keyboardType = 'default'
+            labelFontSize = {18}
+            returnKeyType = 'done'
+            editable = {true}
+            onChangeText={(val) => this.setState({work: val})} 
+            multiline = {true}
+            maxLength = {50}
+            />
+
+
+            <TextField style={styles.fieldStyle}
+            label='금주계획'
+            keyboardType = 'default'
+            labelFontSize = {18}
+            returnKeyType = 'done'
+            editable = {true}
+            onChangeText={(val) => this.setState({plan: val})} 
+            multiline = {true}
+            maxLength = {50}
+            />
+
+
+            <TouchableOpacity style={styles.buttonContainer} onPress={()=>this.onSubmitPressed()}>
+              <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
-    
-          }
-            keyExtractor={item => item.id}
-            refreshing={this.state.refreshing}
-            onRefresh={this.handleRefresh}//스크롤시 refresh
+        
+      </ScrollView>   
 
-
-          />
-
-        </Container>
+ 
       );
   }
 }
 
 
 
-const styles = StyleSheet.create({
-  buttonText: {
 
-  }
+
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    marginBottom: 20
+  },
+
+  fieldStyle: {
+    fontSize: 16,
+  },
+
+  buttonContainer: {
+    backgroundColor: '#c7a4ff',
+    paddingVertical: 10
+  },
+
+  buttonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontWeight: '700',
+  },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
+
 
 });

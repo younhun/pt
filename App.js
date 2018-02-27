@@ -4,6 +4,7 @@ import { StackNavigator, TabNavigator } from 'react-navigation'; //StackNavigato
 
 import LoginForm from './src//Components/LoginForm';
 import SignupForm from './src//Components/SignupForm';
+import ReportsContents from './src/Components/ReportsContents';
 
 
 import MainPage from './src/Pages/MainPage';
@@ -12,15 +13,14 @@ import ProfilePage from './src/Pages/ProfilePage';
 import ReportPage from './src/Pages/ReportPage';
 
 
-const TabNav = TabNavigator({
 
+const TabNav = TabNavigator({
+  ListPage: {
+    screen: ListPage
+  },
 
   ReportPage: {
     screen: ReportPage
-  },
-
-  ListPage: {
-    screen: ListPage
   },
 
   ProfilePage: {
@@ -70,6 +70,10 @@ const AppStackNavigator = StackNavigator({
   TabNav: {
     screen: TabNav
   },
+
+  ReportsContents: {
+    screen: ReportsContents
+  }
 
 
 }, {
