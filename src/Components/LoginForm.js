@@ -102,6 +102,7 @@ export default class LoginForm extends Component{
           labelFontSize = {18}
           keyboardType = 'email-address'
           label='email'
+          
           returnKeyType = 'done'
           onSubmitEditing={() => this.password.focus()} //확인 누르면 password로 focus가 맞춰진다.
           onChangeText={(val) => this.setState({email: val})} 
@@ -111,6 +112,7 @@ export default class LoginForm extends Component{
           label='password'
           labelFontSize = {18}
           keyboardType = 'default'
+          
           returnKeyType = 'go'
           secureTextEntry = {true}
           ref = {(input)=>this.password=input} //focus맞추기 위해

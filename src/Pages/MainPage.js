@@ -19,11 +19,8 @@ export default class MainPage extends Component{
         color: 'white',
         fontWeight: '500'
       },
-      
-    tabBarIcon: ({ tintColor }) => (
-      <Icon name = 'home' color= {tintColor}/>
-      ///이부분 어렵게 해결
-    )
+
+
   }
   constructor(props) {
     super(props);
@@ -55,7 +52,7 @@ export default class MainPage extends Component{
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
       .then((text) => {
-        console.log('request succeeded with JSON response', text)
+        console.log('MainPage request succeeded with JSON response', text)
         this.setState({
           data: text,
           refreshing: false
@@ -66,11 +63,10 @@ export default class MainPage extends Component{
       })
    }
 
-
-
   componentDidMount(){
     this.getData();
-  }
+    
+    }
 
 
   handleRefresh = () =>{

@@ -11,6 +11,8 @@ import MainPage from './src/Pages/MainPage';
 import ListPage from './src/Pages/ListPage';
 import ProfilePage from './src/Pages/ProfilePage';
 import ReportPage from './src/Pages/ReportPage';
+import EditPage from './src/Pages/EditPage';
+import SettingPage from './src/Pages/SettingPage';
 
 
 
@@ -26,6 +28,7 @@ const TabNav = TabNavigator({
   ProfilePage: {
     screen: ProfilePage
   },
+
 
   
 
@@ -54,6 +57,17 @@ const TabNav = TabNavigator({
 
 );
 
+const SettingStack = StackNavigator({
+  SettingPage: {
+    screen: SettingPage
+  }, 
+
+
+}, {
+    headerMode: 'none',
+    mode: 'modal'
+  });
+
 
 const AppStackNavigator = StackNavigator({
   Login : {
@@ -73,6 +87,14 @@ const AppStackNavigator = StackNavigator({
 
   ReportsContents: {
     screen: ReportsContents
+  },
+
+  EditPage: {
+    screen: EditPage
+  },
+
+  SettingStack: {
+    screen: SettingStack
   }
 
 

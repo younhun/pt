@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { TextField } from 'react-native-material-textfield';
+import { FormLabel, FormInput } from 'react-native-elements'
 
 
-
-export default class ReportPage extends Component{
+export default class EditPage extends Component{
   static navigationOptions = {
     title : 'We R Promptech',
       headerStyle: {
@@ -27,7 +26,8 @@ export default class ReportPage extends Component{
     this.state = {
       work: '',
       plan: '',
-      error: []
+      error: [],
+      reportData: []
 
     };
   }
@@ -64,7 +64,7 @@ export default class ReportPage extends Component{
         //Handle success
         this.setState({error: ""});
         console.log("report success is :" + res);
-        this.props.navigation.navigate('ListPage');
+        this.props.navigation.goBack();
 
       }else {
         //Handle error
@@ -77,38 +77,74 @@ export default class ReportPage extends Component{
     } 
   };
 
+  async getData() {
+    const weekId = this.props.navigation.state.params.weekId
+    const reportId = this.props.navigation.state.params.reportId
+    let params = {
+      "access_token": this.props.navigation.state.params.token,
+      // 'page': this.state.page
+    }
 
+    let esc = encodeURIComponent
+    let query = Object.keys(params)
+                 .map(k => esc(k) + '=' + esc(params[k]))
+                 .join('&')
+
+    let url = 'http://wr.promptech.co.kr/api/weeks/'+ weekId + '/reports/' + reportId + '?' + query
+    await fetch(url)
+      .then(data => data.json())//data를 json형식으로
+      .then((text) => {
+        console.log('editpage get data succeeded with JSON response', text)
+        this.setState({
+          reportData: text.report,
+        
+        })
+      }).catch(function (error) {
+        console.log('request failed', error)
+
+      })
+   }
+
+   componentDidMount(){
+    this.getData();
+    
+  }
 
   render(){
 
-
+    const text = this.state.reportData.work
     return(
       //ScrollView = 키보드 숨기기
         <ScrollView style={styles.container} 
         scrollEnabled={true}>
             
-            <TextField style={styles.fieldStyle}
-            label='작업내용'
+            <FormLabel >작업 내용</FormLabel>
+            <FormInput style = {{width: '100%'}}
+            defaultValue = {this.state.reportData.work}
+            
+            onChangeText= {(val) => 
+            
+            this.setState({work: val})
+            
+            }
+            
+              
             keyboardType = 'default'
-            labelFontSize = {18}
-            returnKeyType = 'done'
-            editable = {true}
-            onChangeText={(val) => this.setState({work: val})} 
             multiline = {true}
-            maxLength = {50}
+            returnKeyType = 'done'
             />
 
-
-            <TextField style={styles.fieldStyle}
-            label='금주계획'
+            <FormLabel >금주 계획</FormLabel>
+            <FormInput style = {{width: '100%'}} 
+            defaultValue = {this.state.reportData.plan}
+            onChangeText = {(val) => this.setState({plan: val})}
+          
             keyboardType = 'default'
-            labelFontSize = {18}
-            returnKeyType = 'done'
-            editable = {true}
-            onChangeText={(val) => this.setState({plan: val})} 
             multiline = {true}
-            maxLength = {50}
+            returnKeyType = 'done'
             />
+            
+
 
 
             <TouchableOpacity style={styles.buttonContainer} onPress={()=>this.onSubmitPressed()}>
@@ -139,7 +175,8 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     backgroundColor: '#c7a4ff',
-    paddingVertical: 10
+    paddingVertical: 10,
+    marginTop: 20
   },
 
   buttonText: {

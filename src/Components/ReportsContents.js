@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Alert, RefreshControl, List } from 'react-native';
 import { Container, Content, Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
 import { Icon } from 'react-native-elements';
 import HTMLView from 'react-native-htmlview';
@@ -27,7 +27,11 @@ export default class ReportsContents extends Component {
      lastData: [],
      user: [],
      date: '',
-     error: []
+     error: [],
+     current_user: [],
+     refreshing: false,
+     loading: false,
+
     };
   }
 
@@ -47,17 +51,18 @@ export default class ReportsContents extends Component {
                  .join('&')
 
     let url = 'http://wr.promptech.co.kr/api/weeks/'+ weekId + '/reports/' + reportId + '?' + query
-
+    this.setState({loading: true});
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
       .then((text) => {
-        console.log('request succeeded with JSON response', text)
+        console.log('report get data succeeded with JSON response', text)
         
         this.setState({
           reportData: text.report,
           lastData: text.last_report,
           user: text.report.user,
-          date: text.report.updated_at.substring(0,10)
+          date: text.report.updated_at.substring(0,10),
+          refreshing: false
 
   
         })
@@ -67,22 +72,107 @@ export default class ReportsContents extends Component {
       })
    }
 
+  async getUser() {
+    const id = this.props.navigation.state.params.weekId
+
+    let params = {
+      "access_token": this.props.navigation.state.params.token,
+      // 'page': this.state.page
+    }
+
+    let esc = encodeURIComponent
+    let query = Object.keys(params)
+                 .map(k => esc(k) + '=' + esc(params[k]))
+                 .join('&')
+
+    let url = 'http://wr.promptech.co.kr/api/users/me?' + query
+    await fetch(url)
+      .then(data => data.json())//data를 json형식으로
+      .then((text) => {
+        console.log('UserData request succeeded with JSON response', text)
+        
+        this.setState({
+          current_user: text,
+
+          
+        })
+      }).catch(function (error) {
+        console.log('request failed', error)
+
+      })
+   }
+
+
 
 
   componentDidMount(){
     this.getData();
+    this.getUser();
   }
 
-  
+  async edit(current_user){
+    const token = this.props.navigation.state.params.token;
+    if(current_user.email === this.state.user.email){
+      console.log("edit");
+      this.props.navigation.navigate('EditPage',{weekId: this.props.navigation.state.params.weekId, token: this.props.navigation.state.params.token, reportId: this.props.navigation.state.params.reportId});
 
+
+    }else{
+      console.log("Cant't edit");
+      Alert.alert("Can't edit");
+    }
+  }
+
+  async delete(current_user){
+    if(current_user.email === this.state.user.email){
+       let report_id = this.state.reportData.id
+       const weekId = this.props.navigation.state.params.weekId
+       
+       let params = {
+          "access_token": this.props.navigation.state.params.token,
+          // 'page': this.state.page
+        }
+
+        let esc = encodeURIComponent
+        let query = Object.keys(params)
+                     .map(k => esc(k) + '=' + esc(params[k]))
+                     .join('&')
+        
+        let url = 'http://localhost:3000/api/weeks/' + weekId + '/reports/' + report_id + '/delete?'  + query
+        let response = await fetch(url, {method: 'delete'})
+          let res = await response;
+        
+       
+        this.props.navigation.goBack()
+    }else{
+      console.log("Cant't delete");
+      Alert.alert("Can't delete");
+    }
+
+  }
+  
+ handleRefresh = () =>{
+    this.setState({
+      page: 1,
+      refreshing: true,
+
+    }, () => {
+      this.getData();
+    })
+  }
 
   render(){  
-  
-      console.log(this.state.lastData)
+    
       return(
+
       <Container>
-        <Content>
-          <Card>
+        <Content refreshControl={
+              <RefreshControl 
+              refreshing={this.state.refreshing}
+              onRefresh={this.handleRefresh}//스크롤시 refresh
+              />
+          }>               
+          <Card >
             <CardItem>
               <Left>
                 <Thumbnail source={require('../images/ic_face.png')} />
@@ -154,22 +244,18 @@ export default class ReportsContents extends Component {
             :
             false
           }   
-               
         </Content>
         
           <ActionButton buttonColor="#64489b">
-            <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => console.log("notes tapped!")}>
-              <Icon name="md-create" style={styles.actionButtonIcon} />
+            <ActionButton.Item buttonColor='#9b59b6' title="Edit" onPress={() => this.edit(this.state.current_user)}>
+              <Icon name="create" style={styles.actionButtonIcon} />
             </ActionButton.Item>
-            <ActionButton.Item buttonColor='#3498db' title="Notifications" onPress={() => {}}>
-              <Icon name="md-notifications-off" style={styles.actionButtonIcon} />
-            </ActionButton.Item>
-            <ActionButton.Item buttonColor='#1abc9c' title="All Tasks" onPress={() => {}}>
-              <Icon name="md-done-all" style={styles.actionButtonIcon} />
+            <ActionButton.Item buttonColor='#3498db' title="Delete" onPress={() => this.delete(this.state.current_user)}>
+              <Icon name="delete" style={styles.actionButtonIcon} />
             </ActionButton.Item>
           </ActionButton> 
         
-      </Container>
+        </Container>
        )
       }
    

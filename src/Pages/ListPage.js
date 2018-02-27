@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
-import ViewMoreText from 'react-native-view-more-text';//read more
 import { List, ListItem, Icon } from 'react-native-elements'
 
 
@@ -26,7 +25,8 @@ export default class ListPage extends Component{
     this.state = {
      data: [],
      refreshing: false,
-     loading: false
+     loading: false,
+     
 
     };
   }
@@ -44,12 +44,12 @@ export default class ListPage extends Component{
                  .map(k => esc(k) + '=' + esc(params[k]))
                  .join('&')
 
-    let url = 'http:/wr.promptech.co.kr/api/weeks/'+ id + '?' + query
+    let url = 'http://wr.promptech.co.kr/api/weeks/'+ id + '?' + query
     this.setState({loading: true});
     await fetch(url)
       .then(data => data.json())//data를 json형식으로
       .then((text) => {
-        console.log('request succeeded with JSON response', text)
+        console.log('ListPage request succeeded with JSON response', text)
         
         this.setState({
           data: text,
@@ -61,15 +61,16 @@ export default class ListPage extends Component{
       })
    }
 
+  
 
 
   componentDidMount(){
     this.getData();
+    
   }
 
   handleRefresh = () =>{
     this.setState({
-      page: 1,
       refreshing: true,
 
     }, () => {
@@ -81,7 +82,7 @@ export default class ListPage extends Component{
 
 
   render(){ 
-  
+    // const user_id = 
 
     return(
        <View style={styles.container} >
